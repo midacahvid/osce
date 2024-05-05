@@ -150,7 +150,11 @@ export default function Students() {
           <div className="overflow-y-auto max-h-96">
             {students?.map((student) => {
               return (
-                <StudentsCard student={student} fetchStudents={fetchStudents} />
+                <StudentsCard
+                  student={student}
+                  fetchStudents={fetchStudents}
+                  key={student.id}
+                />
               )
             })}
           </div>

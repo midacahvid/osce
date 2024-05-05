@@ -206,6 +206,7 @@ export default function Dashboard() {
                           <StudentsCard
                             student={student}
                             fetchStudents={fetchStudents}
+                            key={student.id}
                           />
                         )
                       })}

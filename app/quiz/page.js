@@ -179,19 +179,19 @@ export default function () {
                   <h1 className=" mb-2">
                     Course Code:
                     {enabled?.map((ena) => {
-                      return <strong> {ena.courseCode}</strong>
+                      return <strong key={1}> {ena.courseCode}</strong>
                     })}
                   </h1>
                   <h1 className=" mb-2">
                     course title:
                     {exams?.map((exam) => {
-                      return <strong> {exam.title}</strong>
+                      return <strong key={2}> {exam.title}</strong>
                     })}
                   </h1>
                   <h1 className=" mb-2">
                     Time allow:
                     {exams?.map((exam) => {
-                      return <strong> {exam.time}</strong>
+                      return <strong key={3}> {exam.time}</strong>
                     })}
                   </h1>
                 </div>

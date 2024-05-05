@@ -96,7 +96,13 @@ export default function List({
           </thead>
           <tbody>
             {activities?.map((item) => {
-              return <Activities data={item} handleChange={handleChange} />
+              return (
+                <Activities
+                  data={item}
+                  handleChange={handleChange}
+                  key={item.id}
+                />
+              )
             })}
           </tbody>
         </table>
