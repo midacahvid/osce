@@ -5,6 +5,8 @@ import items from './items'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebaseConfig'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function List({
   setTotalScore,
@@ -20,14 +22,14 @@ export default function List({
     four: 0,
   })
   const { data: session } = useSession()
+  const router = useRouter()
 
   // const [myformatTime, setMyFormatTime] = useState('')
 
   useEffect(() => {
     if (timeLeft <= 0) {
       // Time up logic
-      submitOsceScores(window.event)
-      console.log('heloo')
+      submitOsceScoresTime()
     } else {
       const timerInterval = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1)
@@ -62,16 +64,32 @@ export default function List({
           [myKey]: total,
         })
 
-        alert(total + ' was submittedsuccessfully')
+        toast.success('Your scores have been submitted successfully')
+        router.push('/')
+        router.refresh()
       } catch (error) {
-        console.log(error)
+        toast.error('Something went wrong, Try again')
       }
       alert(total)
     } else {
-      alert('do not submit')
+      toast.info('Alright continue')
     }
+  }
+  const submitOsceScoresTime = async () => {
+    const total = formData.one + formData.two + formData.three + formData.four
+    const examRef = doc(db, 'results', session?.user?.id)
+    const myKey = `station${params.station}`
+    try {
+      await updateDoc(examRef, {
+        [myKey]: total,
+      })
 
-    // console.log(total)
+      toast.success('Your scores have been submitted successfully')
+      router.push('/')
+      router.refresh()
+    } catch (error) {
+      toast.error('Something went wrong, Try again')
+    }
   }
   return (
     <div className="relative  question-card p-3 mt-5">

@@ -12,6 +12,8 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 export default function ({ params }) {
   const { data: session } = useSession()
   const [formData, setFormData] = useState({
@@ -25,6 +27,7 @@ export default function ({ params }) {
   const [enabled, setEnabled] = useState([])
   const [questions, setQuestions] = useState([])
   const [exams, setExams] = useState([])
+  const router = useRouter()
   let questionCount = 0
 
   const handleChange = (event) => {
@@ -37,7 +40,7 @@ export default function ({ params }) {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      submitScores(window.event)
+      submitScoresTime()
     } else if (timeLeft >= 1190) {
       enableItem()
       fetchExams()
@@ -144,12 +147,43 @@ export default function ({ params }) {
           [myKey]: totalscores,
         })
 
-        alert(totalscores + ' was submittedsuccessfully')
+        toast.success('Scores have been submitted successfully')
+        router.push('/')
+        router.refresh()
       } catch (error) {
-        console.log(error)
+        toast.error('Something when wrong, Submit again')
       }
     } else {
       console.log('false')
+    }
+  }
+
+  const submitScoresTime = async () => {
+    let totalscores = 0
+    let keys = Object.keys(formData)
+    questions.forEach((ques) => {
+      keys.map((key) => {
+        let myKey = key
+        if (ques.quesNo == key && ques.correctAnswer == formData[myKey]) {
+          console.log(ques.correctAnswer + '' + formData[myKey])
+          totalscores++
+        } else {
+          console.log('false')
+        }
+      })
+    })
+    const myKey = `station${params.station}`
+    const examRef = doc(db, 'results', session?.user?.id)
+    try {
+      await updateDoc(examRef, {
+        [myKey]: totalscores,
+      })
+
+      toast.success('Scores have been submitted successfully')
+      router.push('/')
+      router.refresh()
+    } catch (error) {
+      toast.error('Something when wrong, Submit again')
     }
   }
 

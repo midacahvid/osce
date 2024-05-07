@@ -10,6 +10,7 @@ import {
   collection,
   deleteDoc,
 } from 'firebase/firestore'
+import { toast } from 'sonner'
 export default function Students() {
   const [regNo, setRegNo] = useState('')
   const [name, setName] = useState('')
@@ -31,7 +32,6 @@ export default function Students() {
         id: doc.id,
       }))
       setStudents(newData)
-      console.log(students, newData)
     })
   }
 
@@ -54,8 +54,10 @@ export default function Students() {
     const docRef = doc(db, 'students', myNo)
     const docSnap = await getDoc(docRef)
 
-    if (docSnap.exists()) {
-      alert('student already exist')
+    if (name == '' || regNo == '') {
+      toast.error('Some fields are empty')
+    } else if (docSnap.exists()) {
+      toast.error('Student already register')
     } else {
       try {
         await setDoc(doc(db, 'students', myNo), {
@@ -73,9 +75,9 @@ export default function Students() {
           regNo: regNo.toUpperCase(),
         })
         fetchStudents()
-        alert('successful')
+        toast.success('Student registered successfully')
       } catch (error) {
-        console.log('failed')
+        toast.error('An error occur try again')
       }
     }
   }

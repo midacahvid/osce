@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { getDocs, collection, addDoc, query, where } from 'firebase/firestore'
 import { db } from '../firebaseConfig'
+import { toast } from 'sonner'
 
 export default function AddExams() {
   const [exams, setExams] = useState('')
@@ -55,7 +56,7 @@ export default function AddExams() {
     const querySnapshot2 = await getDocs(s)
 
     if (!querySnapshot2.empty) {
-      alert(
+      toast.error(
         'question No already exist for that course code, pls select another one'
       )
     } else {
@@ -65,7 +66,7 @@ export default function AddExams() {
         quesNumber == '' ||
         stationAct == ''
       ) {
-        alert('some fields are empty')
+        toast.error('some fields are empty')
       } else {
         try {
           await addDoc(collection(db, 'activities'), {
@@ -75,9 +76,9 @@ export default function AddExams() {
             stationAct: stationAct,
           })
           fetchExams()
-          alert('successful')
+          toast.success('Activity addedd successfully')
         } catch (error) {
-          console.log('failed')
+          toast.error('something went wrong')
         }
       }
     }
@@ -97,7 +98,7 @@ export default function AddExams() {
     const querySnapshot2 = await getDocs(s)
 
     if (!querySnapshot2.empty) {
-      alert(
+      toast.error(
         'question No already exist for that course code, pls select another one'
       )
     } else {
@@ -112,7 +113,7 @@ export default function AddExams() {
         correctAnswer == '' ||
         stationObj == ''
       ) {
-        alert('some fields are empty')
+        toast.error('some fields are empty')
       } else {
         try {
           await addDoc(collection(db, 'objectives'), {
@@ -127,9 +128,9 @@ export default function AddExams() {
             stationObj: stationObj,
           })
           fetchExams()
-          alert('successful')
+          toast.success('Question added successfully')
         } catch (error) {
-          console.log('failed')
+          toast.error('something went wrong')
         }
       }
     }

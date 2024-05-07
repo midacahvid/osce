@@ -2,6 +2,7 @@
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export default function DashboardLogin() {
   const [userName, setUserName] = useState('')
@@ -17,7 +18,7 @@ export default function DashboardLogin() {
       redirect: false,
     })
     if (res.error) {
-      alert('you are not an admin')
+      toast.error('You are not an admin')
     } else {
       router.push('/dashboard')
       router.refresh()
