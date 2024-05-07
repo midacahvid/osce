@@ -1,8 +1,10 @@
 'use client'
 
+import { doc, getDoc } from 'firebase/firestore'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { act, useState } from 'react'
+import { db } from '../firebaseConfig'
 
 export default function Login() {
   const router = useRouter()
@@ -10,6 +12,8 @@ export default function Login() {
   const [exa, SetExa] = useState(false)
   const [examCode, setExamCode] = useState('')
   const [regNo, setRegNo] = useState()
+  const [stationStu, setStationStu] = useState('')
+  const [stationExa, setStationExa] = useState('')
   const { data: session } = useSession()
   // if (session) {
   //   router.push('/quiz')
@@ -32,30 +36,57 @@ export default function Login() {
   const loginStudent = async (e) => {
     e.preventDefault()
 
-    const res = await signIn('credentials', {
-      regNo: regNo,
-      redirect: false,
-    })
-    if (res.error) {
-      alert('students not reg')
+    let myNo = regNo.trim().split('/').join('')
+    myNo = myNo.toUpperCase()
+    const docRef = doc(db, 'results', myNo)
+    const docSnap = await getDoc(docRef)
+    if (regNo == '' || stationStu == '') {
+      alert('some fields are empty')
+    } else if (
+      docSnap.exists() &&
+      docSnap.data()[`station${stationStu}`] >= 1
+    ) {
+      alert('you have already taking this station, select another station')
     } else {
-      router.push('/quiz')
-      router.refresh()
+      const res = await signIn('credentials', {
+        regNo: regNo,
+        redirect: false,
+      })
+      if (res.error) {
+        alert('students not reg')
+      } else {
+        router.push(`/quiz/${stationStu}`)
+        router.refresh()
+      }
     }
   }
   const loginExaminer = async (e) => {
     e.preventDefault()
-
-    const res = await signIn('credentials', {
-      regNo: regNo,
-      examCode: examCode,
-      redirect: false,
-    })
-    if (res.error) {
-      alert('you are not an examiner')
+    let myNo = regNo.trim().split('/').join('')
+    myNo = myNo.toUpperCase()
+    const docRef = doc(db, 'results', myNo)
+    const docSnap = await getDoc(docRef)
+    if (regNo == '' || examCode == '' || stationExa == '') {
+      alert('some fields are empty')
+    } else if (
+      docSnap.exists() &&
+      docSnap.data()[`station${stationStu}`] >= 1
+    ) {
+      alert(
+        'this student have already taking this station, select another station'
+      )
     } else {
-      router.push('/checklist')
-      router.refresh()
+      const res = await signIn('credentials', {
+        regNo: regNo,
+        examCode: examCode,
+        redirect: false,
+      })
+      if (res.error) {
+        alert('you are not an examiner')
+      } else {
+        router.push(`/checklist/${stationExa}`)
+        router.refresh()
+      }
     }
   }
   return (
@@ -105,6 +136,26 @@ export default function Login() {
                     required=""
                   />
                 </div>
+                <label
+                  for="countries"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Select Station No
+                </label>
+                <select
+                  id="countries"
+                  value={stationStu}
+                  onChange={(e) => setStationStu(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="">select station No</option>
+                  <option value="1">one</option>
+                  <option value="2">two</option>
+                  <option value="3">three</option>
+                  <option value="4">four</option>
+                  <option value="5">five</option>
+                  <option value="6">six</option>
+                </select>
                 <button
                   type="submit"
                   className="w-full text-white bg-blue-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -161,6 +212,26 @@ export default function Login() {
                     required=""
                   />
                 </div>
+                <label
+                  for="countries"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Select Station No
+                </label>
+                <select
+                  id="countries"
+                  value={stationExa}
+                  onChange={(e) => setStationExa(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="">select station No</option>
+                  <option value="1">one</option>
+                  <option value="2">two</option>
+                  <option value="3">three</option>
+                  <option value="4">four</option>
+                  <option value="5">five</option>
+                  <option value="6">six</option>
+                </select>
                 <button
                   type="submit"
                   className="w-full text-white bg-blue-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"

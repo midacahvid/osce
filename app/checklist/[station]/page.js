@@ -1,11 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react'
-import List from '../components/checklist'
-import { db } from '../firebaseConfig'
+import List from '../../components/checklist'
+import { db } from '../../firebaseConfig'
 import { getDocs, collection, query, where } from 'firebase/firestore'
 import { useSession } from 'next-auth/react'
 
-export default function CheckList() {
+export default function CheckList({ params }) {
   const [totalScore, setTotalScore] = useState(0)
   const [timeLeft, setTimeLeft] = useState(1 * 60)
   const [enabled, setEnabled] = useState([])
@@ -29,7 +29,8 @@ export default function CheckList() {
     if (enabled.length >= 1) {
       const q = query(
         collection(db, 'activities'),
-        where('exams', '==', enabled[0].courseCode)
+        where('exams', '==', enabled[0].courseCode),
+        where('exams', '==', params.station)
       )
       await getDocs(q).then((querySnapshot) => {
         const newData = querySnapshot.docs.map((doc) => ({
@@ -122,6 +123,7 @@ export default function CheckList() {
             setTimeLeft={setTimeLeft}
             timeLeft={timeLeft}
             activities={activities}
+            params={params}
           />
         </div>
       ) : (

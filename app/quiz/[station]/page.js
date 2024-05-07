@@ -1,8 +1,8 @@
 'use client'
-import Questionslist from '../components/questionslist'
+import Questionslist from '../../components/questionslist'
 import { useState, useEffect } from 'react'
-import QuestionCard from '../components/questionCard'
-import { db } from '../firebaseConfig'
+import QuestionCard from '../../components/questionCard'
+import { db } from '../../firebaseConfig'
 import {
   getDocs,
   collection,
@@ -12,7 +12,7 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { useSession } from 'next-auth/react'
-export default function () {
+export default function ({ params }) {
   const { data: session } = useSession()
   const [formData, setFormData] = useState({
     one: '',
@@ -78,7 +78,8 @@ export default function () {
     if (enabled.length >= 1) {
       const q = query(
         collection(db, 'objectives'),
-        where('exams', '==', enabled[0].courseCode)
+        where('exams', '==', enabled[0].courseCode),
+        where('stationObj', '==', params.station)
       )
       await getDocs(q).then((querySnapshot) => {
         const newData = querySnapshot.docs.map((doc) => ({
@@ -136,10 +137,11 @@ export default function () {
           }
         })
       })
-      const examRef = doc(db, 'students', session?.user?.id)
+      const myKey = `station${params.station}`
+      const examRef = doc(db, 'results', session?.user?.id)
       try {
         await updateDoc(examRef, {
-          objScore: totalscores,
+          [myKey]: totalscores,
         })
 
         alert(totalscores + ' was submittedsuccessfully')

@@ -61,10 +61,16 @@ export default function Students() {
         await setDoc(doc(db, 'students', myNo), {
           name: name,
           regNo: regNo.toUpperCase(),
-          objScore: 0,
-          osceScore: 0,
-          osceStatus: false,
-          objStatus: false,
+        })
+        await setDoc(doc(db, 'results', myNo), {
+          name: name,
+          station1: 0,
+          station2: 0,
+          station3: 0,
+          station4: 0,
+          station5: 0,
+          station6: 0,
+          regNo: regNo.toUpperCase(),
         })
         fetchStudents()
         alert('successful')

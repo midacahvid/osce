@@ -71,3 +71,12 @@ body {
 /* .option2 input[type='radio']:checked + li {
   background-color: #76cf9f;
 } */
+
+/* git config --global --unset http.proxy
+git config --global --unset https.proxy 
+git init
+git add .
+git commit -m 'second commit'
+git branch -M main
+git remote add origin https://github.com/midacahvid/osce.git
+git push -u origin main*/

@@ -5,6 +5,8 @@ import { db } from '../firebaseConfig'
 
 export default function AddExams() {
   const [exams, setExams] = useState('')
+  const [stationObj, setStationObj] = useState('')
+  const [stationAct, setStationAct] = useState('')
   const [examsObj, setExamsObj] = useState('')
   const [examsTypes, setExamsTypes] = useState([])
   const [quesNumber, setQuesNumber] = useState('')
@@ -45,7 +47,8 @@ export default function AddExams() {
     const s = query(
       collection(db, 'activities'),
       where('exams', '==', exams),
-      where('actNo', '==', quesNumber)
+      where('actNo', '==', quesNumber),
+      where('stationAct', '==', stationAct)
     )
 
     // const querySnapshot1 = await getDocs(q)
@@ -56,7 +59,12 @@ export default function AddExams() {
         'question No already exist for that course code, pls select another one'
       )
     } else {
-      if (exams == '' || activity == '' || quesNumber == '') {
+      if (
+        exams == '' ||
+        activity == '' ||
+        quesNumber == '' ||
+        stationAct == ''
+      ) {
         alert('some fields are empty')
       } else {
         try {
@@ -64,6 +72,7 @@ export default function AddExams() {
             exams: exams,
             activity: activity,
             actNo: quesNumber,
+            stationAct: stationAct,
           })
           fetchExams()
           alert('successful')
@@ -80,7 +89,8 @@ export default function AddExams() {
     const s = query(
       collection(db, 'objectives'),
       where('exams', '==', examsObj),
-      where('quesNo', '==', quesNo)
+      where('quesNo', '==', quesNo),
+      where('stationObj', '==', stationObj)
     )
 
     // const querySnapshot1 = await getDocs(q)
@@ -99,7 +109,8 @@ export default function AddExams() {
         optionTwo == '' ||
         optionThree == '' ||
         optionFour == '' ||
-        correctAnswer == ''
+        correctAnswer == '' ||
+        stationObj == ''
       ) {
         alert('some fields are empty')
       } else {
@@ -113,6 +124,7 @@ export default function AddExams() {
             optionThree: optionThree,
             optionFour: optionFour,
             correctAnswer: correctAnswer,
+            stationObj: stationObj,
           })
           fetchExams()
           alert('successful')
@@ -241,6 +253,21 @@ export default function AddExams() {
             className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
+        <div>
+          <label
+            for="small-input"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Station No
+          </label>
+          <input
+            type="text"
+            id="small-input"
+            value={stationObj}
+            onChange={(e) => setStationObj(e.target.value)}
+            className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
         <label
           for="countries"
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -321,6 +348,21 @@ export default function AddExams() {
           className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Type activity here..."
         ></textarea>
+        <div>
+          <label
+            for="small-input"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Staion No
+          </label>
+          <input
+            type="text"
+            id="small-input"
+            value={stationAct}
+            onChange={(e) => setStationAct(e.target.value)}
+            className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
         <label
           for="countries"
           className=" mt-2 block mb-2 text-sm font-medium text-gray-900 dark:text-white"

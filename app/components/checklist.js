@@ -11,6 +11,7 @@ export default function List({
   setTimeLeft,
   timeLeft,
   activities,
+  params,
 }) {
   const [formData, setFormData] = useState({
     one: 0,
@@ -54,10 +55,11 @@ export default function List({
     event.preventDefault()
     if (confirm('Are you sure you want to submit') == true) {
       const total = formData.one + formData.two + formData.three + formData.four
-      const examRef = doc(db, 'students', session?.user?.id)
+      const examRef = doc(db, 'results', session?.user?.id)
+      const myKey = `station${params.station}`
       try {
         await updateDoc(examRef, {
-          osceScore: total,
+          [myKey]: total,
         })
 
         alert(total + ' was submittedsuccessfully')

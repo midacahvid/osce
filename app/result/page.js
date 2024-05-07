@@ -28,7 +28,7 @@ export default function Result() {
   //   }
 
   const fetchResults = async () => {
-    await getDocs(collection(db, 'students')).then((querySnapshot) => {
+    await getDocs(collection(db, 'results')).then((querySnapshot) => {
       const newData = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
@@ -74,7 +74,12 @@ export default function Result() {
                     {result.regNo}
                   </span>
                   <strong className="text-gray-600  mr-4">
-                    {result.objScore + result.osceScore}
+                    {result.station1 +
+                      result.station2 +
+                      result.station3 +
+                      result.station4 +
+                      result.station5 +
+                      result.station6}
                   </strong>
                 </li>
               )
