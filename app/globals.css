@@ -73,10 +73,10 @@ body {
 } */
 
 /* git config --global --unset http.proxy
-git config --global --unset https.proxy 
-git init
+git config --global --unset https.proxy  */
+/* git init
 git add .
-git commit -m 'second commit'
+git commit -m 'sixth commit'
 git branch -M main
 git remote add origin https://github.com/midacahvid/osce.git
-git push -u origin main*/
+git push -u origin main */
