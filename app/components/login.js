@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { act, useState } from 'react'
 import { db } from '../firebaseConfig'
 import { toast } from 'sonner'
-import useNetworkStatus from '../network'
+// import useNetworkStatus from '../network'
 
 export default function Login() {
   const router = useRouter()
@@ -18,7 +18,7 @@ export default function Login() {
   const [stationExa, setStationExa] = useState('')
   const [spin, setSpin] = useState(false)
   const { data: session } = useSession()
-  const { isOnline } = useNetworkStatus()
+  // const { isOnline } = useNetworkStatus()
   // if (session) {
   //   router.push('/quiz')
   // }
