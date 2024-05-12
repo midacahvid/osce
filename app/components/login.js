@@ -46,33 +46,28 @@ export default function Login() {
       setSpin(false)
       return
     }
-    if (isOnline) {
-      let myNo = regNo?.trim().split('/').join('')
-      myNo = myNo?.toUpperCase()
-      const docRef = doc(db, 'results', myNo)
-      const docSnap = await getDoc(docRef)
-      if (docSnap.exists() && docSnap.data()[`station${stationStu}`] >= 1) {
-        toast.error(
-          'You have already taking this station, select another station'
-        )
-        setSpin(false)
-      } else {
-        const res = await signIn('credentials', {
-          regNo: regNo.toUpperCase(),
-          redirect: false,
-        })
-        if (res.error) {
-          setSpin(false)
-          toast.error('you are not a student')
-        } else {
-          setSpin(false)
-          router.push(`/quiz/${stationStu}`)
-          router.refresh()
-        }
-      }
-    } else {
-      toast.error('Sorry you are offline')
+    let myNo = regNo?.trim().split('/').join('')
+    myNo = myNo?.toUpperCase()
+    const docRef = doc(db, 'results', myNo)
+    const docSnap = await getDoc(docRef)
+    if (docSnap.exists() && docSnap.data()[`station${stationStu}`] >= 1) {
+      toast.error(
+        'You have already taking this station, select another station'
+      )
       setSpin(false)
+    } else {
+      const res = await signIn('credentials', {
+        regNo: regNo.toUpperCase(),
+        redirect: false,
+      })
+      if (res.error) {
+        setSpin(false)
+        toast.error('you are not a student')
+      } else {
+        setSpin(false)
+        router.push(`/quiz/${stationStu}`)
+        router.refresh()
+      }
     }
   }
   const loginExaminer = async (e) => {
