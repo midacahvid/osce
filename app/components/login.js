@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { act, useState } from 'react'
 import { db } from '../firebaseConfig'
 import { toast } from 'sonner'
+import useNetworkStatus from '../network'
 
 export default function Login() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function Login() {
   const [stationExa, setStationExa] = useState('')
   const [spin, setSpin] = useState(false)
   const { data: session } = useSession()
+  const { isOnline } = useNetworkStatus()
   // if (session) {
   //   router.push('/quiz')
   // }
@@ -37,32 +39,40 @@ export default function Login() {
 
   const loginStudent = async (e) => {
     e.preventDefault()
+
     setSpin(true)
     if (regNo == '' || stationStu == '') {
       toast.error('Some fields are empty')
       setSpin(false)
       return
     }
-    let myNo = regNo?.trim().split('/').join('')
-    myNo = myNo?.toUpperCase()
-    const docRef = doc(db, 'results', myNo)
-    const docSnap = await getDoc(docRef)
-    if (docSnap.exists() && docSnap.data()[`station${stationStu}`] >= 1) {
-      toast.error(
-        'You have already taking this station, select another station'
-      )
-      setSpin(false)
-    } else {
-      const res = await signIn('credentials', {
-        regNo: regNo,
-        redirect: false,
-      })
-      if (res.error) {
-        toast.error('Students not register')
+    if (isOnline) {
+      let myNo = regNo?.trim().split('/').join('')
+      myNo = myNo?.toUpperCase()
+      const docRef = doc(db, 'results', myNo)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists() && docSnap.data()[`station${stationStu}`] >= 1) {
+        toast.error(
+          'You have already taking this station, select another station'
+        )
+        setSpin(false)
       } else {
-        router.push(`/quiz/${stationStu}`)
-        router.refresh()
+        const res = await signIn('credentials', {
+          regNo: regNo.toUpperCase(),
+          redirect: false,
+        })
+        if (res.error) {
+          setSpin(false)
+          toast.error('you are not a student')
+        } else {
+          setSpin(false)
+          router.push(`/quiz/${stationStu}`)
+          router.refresh()
+        }
       }
+    } else {
+      toast.error('Sorry you are offline')
+      setSpin(false)
     }
   }
   const loginExaminer = async (e) => {
@@ -77,7 +87,7 @@ export default function Login() {
     myNo = myNo?.toUpperCase()
     const docRef = doc(db, 'results', myNo)
     const docSnap = await getDoc(docRef)
-    if (docSnap.exists() && docSnap.data()[`station${stationStu}`] >= 1) {
+    if (docSnap.exists() && docSnap.data()[`station${stationExa}`] >= 0.25) {
       toast.error(
         'This student have already taking this station, select another station'
       )
@@ -92,6 +102,7 @@ export default function Login() {
         toast.error('You are not an examiner')
         setSpin(false)
       } else {
+        setSpin(false)
         router.push(`/checklist/${stationExa}`)
         router.refresh()
       }

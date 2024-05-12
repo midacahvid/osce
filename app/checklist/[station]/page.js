@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react'
 
 export default function CheckList({ params }) {
   const [totalScore, setTotalScore] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(1 * 60)
+  const [timeLeft, setTimeLeft] = useState(10 * 60)
   const [enabled, setEnabled] = useState([])
   const [activities, setActivities] = useState([])
   const [exams, setExams] = useState([])
@@ -30,7 +30,7 @@ export default function CheckList({ params }) {
       const q = query(
         collection(db, 'activities'),
         where('exams', '==', enabled[0].courseCode),
-        where('exams', '==', params.station)
+        where('stationAct', '==', params.station)
       )
       await getDocs(q).then((querySnapshot) => {
         const newData = querySnapshot.docs.map((doc) => ({

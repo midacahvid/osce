@@ -32,6 +32,9 @@ const handler = NextAuth({
           let user = {}
           const querySnapshot1 = await getDocs(q)
           const querySnapshot2 = await getDocs(s)
+          if (querySnapshot1.empty) {
+            return null
+          }
           querySnapshot1.forEach((doc) => {
             user = { ...doc.data(), id: doc.id }
           })

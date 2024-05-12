@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { db } from '../firebaseConfig'
 import {
   doc,
@@ -10,6 +10,7 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { toast } from 'sonner'
+// import Loading from '../components/loading'
 export default function Exams() {
   const [title, setTitle] = useState('')
   const [code, setCode] = useState('')
@@ -152,12 +153,7 @@ export default function Exams() {
               onChange={(e) => setTime(e.target.value)}
             />
           </div>
-          {/* <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-3"
-          >
-            Add Exams
-          </button> */}
+
           <button
             type="submit"
             class="text-white w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex justify-center mt-4"
@@ -187,69 +183,73 @@ export default function Exams() {
           </button>
         </form>
       </div>
-      <section className=" w-full mt-5">
-        <div className="row-span-3 bg-white shadow rounded-lg">
-          <div className="flex items-center justify-between px-6 py-3 font-semibold border-b border-gray-100">
-            <span>Exams available</span>
-            <button
-              type="button"
-              className="inline-flex justify-center rounded-md px-1 -mr-1 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-600"
-              id="options-menu"
-              aria-haspopup="true"
-              aria-expanded="true"
-            >
-              Descending
-              <svg
-                className="-mr-1 ml-1 h-5 w-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+      <Suspense fallback="Loading....">
+        <section className=" w-full mt-5">
+          <div className="row-span-3 bg-white shadow rounded-lg">
+            <div className="flex items-center justify-between px-6 py-3 font-semibold border-b border-gray-100">
+              <span>Exams available</span>
+              <button
+                type="button"
+                className="inline-flex justify-center rounded-md px-1 -mr-1 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-600"
+                id="options-menu"
+                aria-haspopup="true"
+                aria-expanded="true"
               >
-                <path
-                  fill-rule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className="overflow-y-auto max-h-96">
-            <ul className="p-3 space-y-6">
-              {exams?.map((exam) => {
-                return (
-                  <li className="flex items-center" key={exam.id}>
-                    <strong className="text-gray-600 mr-2">{exam.code}</strong>
-                    <span className="text-gray-600 mr-2">{exam.title}</span>
-                    <span className="text-gray-600">{exam.time}</span>
-                    <button
-                      className=" ml-auto inline-flex px-1 py-1 text-blue-700 hover:text-blue-600 focus:text-blue-7500 hover:bg-purple-100 focus:bg-purple-100 border border-blue-700 rounded-md mb-3"
-                      onClick={() => enableExams(exam.code)}
-                    >
-                      <svg
-                        aria-hidden="true"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="flex-shrink-0 h-5 w-5 -ml-1 mt-0.5 mr-2"
+                Descending
+                <svg
+                  className="-mr-1 ml-1 h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="overflow-y-auto max-h-96">
+              <ul className="p-3 space-y-6">
+                {exams?.map((exam) => {
+                  return (
+                    <li className="flex items-center" key={exam.id}>
+                      <strong className="text-gray-600 mr-2">
+                        {exam.code}
+                      </strong>
+                      <span className="text-gray-600 mr-2">{exam.title}</span>
+                      <span className="text-gray-600">{exam.time}</span>
+                      <button
+                        className=" ml-auto inline-flex px-1 py-1 text-blue-700 hover:text-blue-600 focus:text-blue-7500 hover:bg-purple-100 focus:bg-purple-100 border border-blue-700 rounded-md mb-3"
+                        onClick={() => enableExams(exam.code)}
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                        />
-                      </svg>
-                      {enabled[0].courseCode == exam.code
-                        ? 'Enabled'
-                        : 'Disabled'}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
+                        <svg
+                          aria-hidden="true"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          className="flex-shrink-0 h-5 w-5 -ml-1 mt-0.5 mr-2"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                          />
+                        </svg>
+                        {enabled[0].courseCode == exam.code
+                          ? 'Enabled'
+                          : 'Disabled'}
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </Suspense>
     </>
   )
 }
